@@ -19,10 +19,21 @@ import ckan.plugins.toolkit as toolkit
 
 from ckan.common import _
 import ckan.lib.helpers as h
+import ckan.lib.i18n as i18n
 
 get_action = logic.get_action
 NotFound = logic.NotFound
 ValidationError = logic.ValidationError
+
+def ensure_translated(s):
+    ts = type(s)
+    if ts == unicode:
+        return s
+    elif ts == str:
+        return unicode(s)
+    elif ts == dict:
+        language = i18n.get_lang()
+        return ensure_translated(s.get(language, u""))
 
 def package_update_rest(context, data_dict):
 
@@ -120,6 +131,9 @@ class MultieditPlugin(SingletonPlugin):
 
     @staticmethod
     def package_matrix(packages, core_fields):
+
+        log.info(packages)
+        log.info(core_fields)
         
         html  = u''
         
@@ -188,7 +202,7 @@ class MultieditPlugin(SingletonPlugin):
                     except (ValueError, TypeError):
                         row_key = row[key]
                     if key == "notes":
-                        val = h.markdown_extract(row_key)                    
+                        val = h.markdown_extract(ensure_translated(row_key))                    
                     if key == "groups":
                         group_ids = []
                         group_names = []

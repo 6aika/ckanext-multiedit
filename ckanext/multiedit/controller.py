@@ -13,8 +13,6 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from ckan.common import OrderedDict
 
-from ckanext.hrifi.schema import fields_translated
-
 
 def search_url(params, mode):
     url = h.url_for(controller='ckanext.multiedit.controller:MultieditController', action=mode)
@@ -41,6 +39,32 @@ class MultieditController(PackageController):
     def render_package_form(self):
 
         data = dict(request.params)
+
+        # Todo: move this somewhere else
+        # Originally imported from a separate extension:
+        # https://github.com/Helsingin-kaupungin-tietokeskus/ckanext-hrifi
+        fields_translated = {
+                u'title_se': _('title_se'),
+                u'title_en': _('title_en'),
+                u'notes_se': _('notes_se'),
+                u'notes_en': _('notes_en'),
+                u'agency': _('agency'),
+                u'source': _('source'),         
+                u'search_info': _('search_info'),
+                u'taxonomy_url': _('taxonomy_url'),
+                u'external_reference': _('external_reference'),
+                u'external_reference_se': _('external_reference_se'),
+                u'external_reference_en': _('external_reference_en'),
+                u'date_released': _('date_released'),
+                u'date_updated': _('date_updated'),
+                u'update_frequency': _('update_frequency'),
+                u'geographic_granularity': _('geographic_granularity'),
+                u'geographic_coverage': _('geographic_coverage'),
+                u'temporal_granularity': _('temporal_granularity'),
+                u'categories': _('categories'),
+                u'temporal_coverage-from': _('temporal_coverage-from'),
+                u'temporal_coverage-to': _('temporal_coverage-to')
+                }
         
         # Populate data['extras'] for the snippet rendering inputs for them.
         extra_fields = []
@@ -63,7 +87,7 @@ class MultieditController(PackageController):
 
         c.group_packages = {}
         for group in c.groups_available:
-            pkg_ids = toolkit.get_action('dataset_list')(data_dict={'id': group['id'], 'object_type': 'dataset'})
+            pkg_ids = toolkit.get_action('package_list')(data_dict={'id': group['id'], 'object_type': 'dataset'})
             c.group_packages[group['name']] = pkg_ids
 
         extra_vars = {'data': data, 'errors': errors, 'error_summary': error_summary, 'stage': ['complete', 'complete', 'complete']}
