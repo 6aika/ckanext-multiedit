@@ -40,15 +40,13 @@ $(document).ready(function() {
 
     hide_package_form();
     
-    $('#fieldselector').change(function() {
-    	
+    $('#fieldselector').change(function() {	
     	selected_id = $('#fieldselector :selected').val();
     	update_visible(selected_id);
 
     	// These get hidden unnecessarily.
         $(".select2-container").show();
-        $(".select2-search").show()
-    	
+        $(".select2-search").show()  	
     }).change();        
     $('.dataset-form').append("<label for='multiadd' class='multiadd' style='float: left'>" + msg_multiadd + "</label>");
     $('.dataset-form').append("<input id='multiadd_check' type='checkbox' value='multiadd' name='multiadd' class='multiadd' style='float: left; margin-left: 10px; margin-top: -4px;' />");
@@ -64,16 +62,13 @@ $(document).ready(function() {
         var new_val;
         var url;
         
-        if(typeof ids == "undefined")
-        {
+        if(typeof ids == "undefined") {
         	$('#ajax_result').html(msg_no_packages_selected);
         }
-        else
-        {
+        else {
         	var id_arr = ids.split(",");
         	
-        	if ($('#multiadd_check').attr('checked'))
-        	{
+        	if ($('#multiadd_check').attr('checked')) {
 
         		if(editField.is("textarea") || (editField.is("input") && editField.attr("type") == "text"))
         		{
