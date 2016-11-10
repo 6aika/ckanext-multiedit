@@ -87,7 +87,6 @@ $(document).ready(function() {
         }
         else
         {
-        	start_spinner();
 			$("#editarea :input").attr("disabled", "disabled");
 			$('#ajax_result').html(msg_update_in_progress);
         	

@@ -40,22 +40,6 @@
 				$('#ajax_result').html($('#ajax_result').html() + '</br><strong>' + msgArr[m] + '</strong>');			
     	}
 	}
-	
-	function start_spinner()
-	{
-		/*if (!($.browser.msie && parseFloat($.browser.version) <= 8))
-			$('#editarea').spin({
-				  lines: 12, // The number of lines to draw
-				  length: 30, // The length of each line
-				  width: 15, // The line thickness
-				  radius: 30, // The radius of the inner circle
-				  color: '#000', // #rgb or #rrggbb
-				  speed: 1, // Rounds per second
-				  trail: 60, // Afterglow percentage
-				  shadow: false, // Whether to render a shadow
-				  hwaccel: true // Whether to use hardware acceleration
-			});*/		
-	}
 
     function update_visible(selected_id)
     {    	        

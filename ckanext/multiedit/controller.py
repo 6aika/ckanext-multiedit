@@ -47,20 +47,20 @@ class MultieditController(PackageController):
         errors = {}
         error_summary = {}
         c.licenses = [('', '')] + model.Package.get_license_options()
-        c.groups_authz = []
+        # c.groups_authz = []
 
-        query = model.Session.query(model.Group)
-        groups = set(query.all())
-        if config.get('ckan.auth.profile', '') == 'publisher':
-            c.groups_available = [{'id':group.id,'name':group.name} for group in c.userobj.get_groups('organization')]#c.userobj and c.userobj.get_groups('organization') or []
-            c.groups_available.extend([{'id':group.id,'name':group.name} for group in groups if not filter(lambda org: org['id'] == group.id, c.groups_available)])
-        else:            
-            c.groups_available = [{'id':group.id,'name':group.name} for group in groups]
+        # query = model.Session.query(model.Group)
+        # groups = set(query.all())
+        # if config.get('ckan.auth.profile', '') == 'publisher':
+        #     c.groups_available = [{'id':group.id,'name':group.name} for group in c.userobj.get_groups('organization')]#c.userobj and c.userobj.get_groups('organization') or []
+        #     c.groups_available.extend([{'id':group.id,'name':group.name} for group in groups if not filter(lambda org: org['id'] == group.id, c.groups_available)])
+        # else:            
+        #     c.groups_available = [{'id':group.id,'name':group.name} for group in groups]
 
-        c.group_packages = {}
-        for group in c.groups_available:
-            pkg_ids = toolkit.get_action('package_list')(data_dict={'id': group['id'], 'object_type': 'dataset'})
-            c.group_packages[group['name']] = pkg_ids
+        # c.group_packages = {}
+        # for group in c.groups_available:
+        #     pkg_ids = toolkit.get_action('package_list')(data_dict={'id': group['id'], 'object_type': 'dataset'})
+        #     c.group_packages[group['name']] = pkg_ids
 
         extra_vars = {'data': data, 'errors': errors, 'error_summary': error_summary, 'stage': ['complete', 'complete', 'complete']}
 
@@ -300,23 +300,6 @@ class MultieditController(PackageController):
             return '{"status":"Not Authorized", "message":"' + _("Access denied.") + '"}'
         except NotFound:
             return '{"status":"Not Found", "message":"' + _("Package not found.") + '"}'
-        except ValidationError:
-            return '{"status":"Conflict", "message":"' + _("Validation error.") + '"}'
-
-
-    def multisave_groups(self):
-        c.error = ''        
-        group_id = request.params['group_id']
-        
-        from ckan.controllers.api import ApiController
-
-        api = ApiController()
-        try:
-            return api.update(register='group', ver=2, id=group_id)
-        except NotAuthorized:
-            return '{"status":"Not Authorized", "message":"' + _("Access denied.") + '"}'
-        except NotFound:
-            return '{"status":"Not Found", "message":"' + _("Group not found.") + '"}'
         except ValidationError:
             return '{"status":"Conflict", "message":"' + _("Validation error.") + '"}'
 
