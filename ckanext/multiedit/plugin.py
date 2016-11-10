@@ -131,9 +131,6 @@ class MultieditPlugin(SingletonPlugin):
 
     @staticmethod
     def package_matrix(packages, core_fields):
-
-        log.info(packages)
-        log.info(core_fields)
         
         html  = u''
         

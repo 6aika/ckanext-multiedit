@@ -12,6 +12,10 @@ from sqlalchemy import and_
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from ckan.common import OrderedDict
+import json
+import ast
+import urlparse
+import urllib2 
 
 
 def search_url(params, mode):
@@ -40,38 +44,6 @@ class MultieditController(PackageController):
 
         data = dict(request.params)
 
-        # Todo: move this somewhere else
-        # Originally imported from a separate extension:
-        # https://github.com/Helsingin-kaupungin-tietokeskus/ckanext-hrifi
-        fields_translated = {
-                u'title_se': _('title_se'),
-                u'title_en': _('title_en'),
-                u'notes_se': _('notes_se'),
-                u'notes_en': _('notes_en'),
-                u'agency': _('agency'),
-                u'source': _('source'),         
-                u'search_info': _('search_info'),
-                u'taxonomy_url': _('taxonomy_url'),
-                u'external_reference': _('external_reference'),
-                u'external_reference_se': _('external_reference_se'),
-                u'external_reference_en': _('external_reference_en'),
-                u'date_released': _('date_released'),
-                u'date_updated': _('date_updated'),
-                u'update_frequency': _('update_frequency'),
-                u'geographic_granularity': _('geographic_granularity'),
-                u'geographic_coverage': _('geographic_coverage'),
-                u'temporal_granularity': _('temporal_granularity'),
-                u'categories': _('categories'),
-                u'temporal_coverage-from': _('temporal_coverage-from'),
-                u'temporal_coverage-to': _('temporal_coverage-to')
-                }
-        
-        # Populate data['extras'] for the snippet rendering inputs for them.
-        extra_fields = []
-        for field, translation in fields_translated.iteritems():
-            extra_fields.append({u'key': field, u'value': translation})
-        data['extras'] = extra_fields
-
         errors = {}
         error_summary = {}
         c.licenses = [('', '')] + model.Package.get_license_options()
@@ -91,8 +63,6 @@ class MultieditController(PackageController):
             c.group_packages[group['name']] = pkg_ids
 
         extra_vars = {'data': data, 'errors': errors, 'error_summary': error_summary, 'stage': ['complete', 'complete', 'complete']}
-        # Set this so we will get the metadata fields forcibly included to the form.
-        extra_vars['multiedit'] = True
 
         return render(self._package_form(), extra_vars=extra_vars)
 
@@ -311,17 +281,21 @@ class MultieditController(PackageController):
 
         return self.perform_query(mode, int(limit))
 
-    # Performs api call to update packages, where ids are given as get-parameters: ?ids="id1,id2,id3"
-    # Updated values are given in JSON as documented in ckan api docs
-    def multisave(self):
-        c.error = ''        
-        pkg_id = request.params['ids']
-        
-        from ckan.controllers.api import ApiController
 
-        api = ApiController()
+    def multisave(self):
+        package_id = request.params['ids']
+        context = {'model': model, 'user': c.user, 'auth_user_obj': c.userobj}
+
+        package = toolkit.get_action('package_show')(context, {'id': package_id})
+
+        body_dict = json.loads(request.body)
+        
+        for key, value in body_dict.iteritems():
+            package[key] = value
+
         try:
-            return api.update(register='package', ver=2, id=pkg_id)
+            toolkit.get_action('package_update')(context, package)
+            return json.dumps({ "Success" : True })
         except NotAuthorized:
             return '{"status":"Not Authorized", "message":"' + _("Access denied.") + '"}'
         except NotFound:

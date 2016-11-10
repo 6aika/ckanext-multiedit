@@ -10,6 +10,7 @@ function send_ajax(url, key, val, ids, total)
     			$('#ajax_result').html(msg_update_in_progress);
     		}
             xhrObj.setRequestHeader("X-CKAN-API-KEY", apikey);
+			xhrObj.setRequestHeader("Content-Type", 'application/json');
     	},
     	data: JSON.stringify(data),
     	dataType: 'json',
