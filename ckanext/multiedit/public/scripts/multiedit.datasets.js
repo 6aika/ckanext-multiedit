@@ -96,7 +96,7 @@ $(document).ready(function() {
             		errors = Array();
             		for (i = 0; i < id_arr.length; i++)
             		{
-            			url = site_url + '/multiedit/multisave?ids='+id_arr[i];
+            			url = site_url + '/multiedit/update_package?id='+id_arr[i];
             			if(key == 'title') {
             				
             				old_val = $.trim($('table.packages tr .' + key).filter('.' + id_arr[i]).children().html());
@@ -141,7 +141,7 @@ $(document).ready(function() {
         		//var id_arr = ids.split(",");
         		for (i = 0; i < id_arr.length; i++)
         		{
-		            url = site_url + '/multiedit/multisave?ids=' + id_arr[i];
+		            url = site_url + '/multiedit/update_package?id=' + id_arr[i];
 		            new_val = val;
         			if (key == "tags")
         			{

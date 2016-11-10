@@ -154,11 +154,6 @@ class MultieditPlugin(SingletonPlugin):
                     #dic['groups'] = groups
                     dic['groups'] = pkg_dict['groups']
                     table_heads['groups'] = ""
-                elif key == 'extras':
-                    for extra_dict in pkg_dict['extras']:
-                        if not extra_dict['key'] in dic.keys():
-                            dic[extra_dict['key']] = extra_dict['value']
-                            table_heads[extra_dict['key']] = ""
                 elif key in core_fields and key not in dic.keys():
                     dic[key] = value
                     table_heads[key] = ""

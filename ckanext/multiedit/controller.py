@@ -282,8 +282,8 @@ class MultieditController(PackageController):
         return self.perform_query(mode, int(limit))
 
 
-    def multisave(self):
-        package_id = request.params['ids']
+    def update_package(self):
+        package_id = request.params['id']
         context = {'model': model, 'user': c.user, 'auth_user_obj': c.userobj}
 
         package = toolkit.get_action('package_show')(context, {'id': package_id})
