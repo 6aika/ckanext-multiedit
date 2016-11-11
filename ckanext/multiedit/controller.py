@@ -17,6 +17,8 @@ import ast
 import urlparse
 import urllib2 
 
+from ckanext.scheming.helpers import scheming_get_dataset_schema
+
 
 def search_url(params, mode):
     url = h.url_for(controller='ckanext.multiedit.controller:MultieditController', action=mode)
@@ -29,15 +31,30 @@ class MultieditController(PackageController):
         super(MultieditController, self).__before__(action, **params)
 
     # Checks that user is logged in. We need users api key to perform updates.
-
-
     def authorize(self):    
         try:
             context = {'model': model,'user': c.user, 'auth_user_obj': c.userobj} 
             check_access('site_read',context)
         except NotAuthorized:
             abort(401, _('Not authorized to see this page'))
-        return model.User.get(c.user) 
+        return model.User.get(c.user)
+
+    def get_dataset_fields(self):
+        fields = model.Package.get_fields(core_only=True)
+
+        scheming_schema = scheming_get_dataset_schema('dataset')['dataset_fields']
+
+        scheming_fields = []
+        for field in scheming_schema:
+            scheming_fields.append(field['field_name'].encode('utf8'))
+
+        # Remove duplicate fields, since scheming can contain fields named similarly to CKAN core fields
+        for field in scheming_fields:
+            if field not in fields:
+                fields.append(field)
+
+        log.info(fields)
+        return fields
 
 
     def render_package_form(self):
@@ -162,8 +179,8 @@ class MultieditController(PackageController):
             c.query_error = False
             user = self.authorize()
             c.apikey = user.apikey
-            c.core_fields = model.Package.get_fields(core_only=True)
-            c.core_fields += ['tags', 'groups']
+
+            c.core_fields = self.get_dataset_fields()
             
             c.fields = []
             search_extras = {}

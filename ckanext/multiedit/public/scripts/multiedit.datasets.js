@@ -1,7 +1,7 @@
-function send_ajax(url, key, val, ids, total)
-{
+function send_ajax(url, key, val, ids, total) {
 	var data = make_data_dict(val, key, core_fields);
-    $.ajaxQueue({url: url,
+    $.ajaxQueue({
+		url: url,
     	beforeSend: function(xhrObj) {
     		if(ready == 0) {
     			$("#editarea :input").attr("disabled", "disabled");
@@ -51,7 +51,7 @@ $(document).ready(function() {
     $('.dataset-form').append("<label for='multiadd' class='multiadd' style='float: left'>" + msg_multiadd + "</label>");
     $('.dataset-form').append("<input id='multiadd_check' type='checkbox' value='multiadd' name='multiadd' class='multiadd' style='float: left; margin-left: 10px; margin-top: -4px;' />");
     $('.dataset-form').append("<br><br>");
-    $('.dataset-form').append("<input type='submit' style='float: left' value='Tallenna' /><br>")
+    $('.dataset-form').append("<input type='submit' style='float: left' value='Tallenna' /><br>");
     $('.dataset-form').submit(function(event) {
     	event.preventDefault();
 		        	
@@ -70,12 +70,10 @@ $(document).ready(function() {
         	
         	if ($('#multiadd_check').attr('checked')) {
 
-        		if(editField.is("textarea") || (editField.is("input") && editField.attr("type") == "text"))
-        		{
+        		if(editField.is("textarea") || (editField.is("input") && editField.attr("type") == "text")) {
             		ready = 0;
             		errors = Array();
-            		for (i = 0; i < id_arr.length; i++)
-            		{
+            		for (i = 0; i < id_arr.length; i++) {
             			url = site_url + '/multiedit/update_package?id='+id_arr[i];
             			if(key == 'title') {	
             				old_val = $.trim($('table.packages tr .' + key).filter('.' + id_arr[i]).children().html());
@@ -106,17 +104,16 @@ $(document).ready(function() {
         			$('#ajax_result').html('<strong>${_("Multiadd allowed only for textfields.")}</strong>');
         		}
         	}	
-        	else
-        	{
+        	else {
         		ready = 0;
         		errors = Array();
-        		for (i = 0; i < id_arr.length; i++)
-        		{
+        		for (i = 0; i < id_arr.length; i++) {
 		            url = site_url + '/multiedit/update_package?id=' + id_arr[i];
 		            new_val = val;
         			if (key == "tags") {
-        				if($.trim(val).substring($.trim(val).length-1, $.trim(val).length) == ',')
-        					new_val = $.trim(val).substring(0, $.trim(val).length-1);        					
+        				if($.trim(val).substring($.trim(val).length-1, $.trim(val).length) == ',') {
+							new_val = $.trim(val).substring(0, $.trim(val).length-1);   
+						}
         			}
 		            send_ajax(url, key, new_val, id_arr[i], id_arr.length);
         		}
@@ -127,16 +124,10 @@ $(document).ready(function() {
     });        
     
    	var lastCol = $('.packages tr:eq(0) th').length - 1;
-   	var options = { widgets: ['zebra']}
-   	var headers = {0: {sorter: false}};
-   	headers[lastCol] = {sorter: false};
+   	var options = { widgets: ['zebra'] };
+   	var headers = { 0: {sorter: false} };
+   	headers[lastCol] = { sorter: false };
    	options['headers'] = headers;
-   	
-   	// Had to remove this because CKAN and Jinja2 are making the usage of .js-extensions too hard. @TODO Re-enable?
-	/*$(".packages")
-	.tablesorter(options)
-	.tablesorterPager({container: $("#pager"), positionFixed: false})
-	.bind("sortEnd",function() { update_visible(selected_id); });*/
 	
 	$(".pager_link").click(function() {
 		update_visible(selected_id);
@@ -144,12 +135,18 @@ $(document).ready(function() {
 	
 	$(".pagesize").change(function() {
 		update_visible(selected_id);
-	});			
+	});
 			
 	$('.checkall').click(function () {
-		if($(this).attr('checked'))
-			$('.package_select').each(function() { $(this).attr('checked', true); });
-		else
-			$('.package_select').each(function() { $(this).attr('checked', false); });
+		if($(this).attr('checked')) {
+			$('.package_select').each(function() { 
+				$(this).attr('checked', true);
+			});
+		}
+		else {
+			$('.package_select').each(function() { 
+				$(this).attr('checked', false); 
+			});
+		}
 	});
 });
